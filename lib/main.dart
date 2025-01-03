@@ -1,4 +1,31 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+
+// Tạo một lớp để lưu trữ thông tin đồ uống
+class Drink {
+  final String name;
+  final String description;
+  final String price;
+  final String imageUrl;
+
+  Drink({
+    required this.name,
+    required this.description,
+    required this.price,
+    required this.imageUrl,
+  });
+
+  // Hàm tạo đối tượng Drink từ JSON
+  factory Drink.fromJson(Map<String, dynamic> json) {
+    return Drink(
+      name: json['name'],
+      description: json['description'],
+      price: json['price'],
+      imageUrl: json['imageUrl'],
+    );
+  }
+}
 
 void main() {
   runApp(const MyApp());
@@ -6,7 +33,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,17 +55,27 @@ class StarbucksHomePage extends StatefulWidget {
 }
 
 class _StarbucksHomePageState extends State<StarbucksHomePage> {
+  List<Drink> drinks = [];
+  List<Drink> filteredDrinks = [];
   List<String> cart = [];
-  List<String> drinks = ["Caffè Latte", "Caramel Macchiato", "Iced Coffee", "Matcha Latte"];
-  List<String> filteredDrinks = [];
   TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    filteredDrinks = drinks;
+    _loadDrinks();
     searchController.addListener(() {
       filterDrinks();
+    });
+  }
+
+  Future<void> _loadDrinks() async {
+    // Đọc file JSON từ assets
+    final String response = await rootBundle.loadString('assets/drinks.json');
+    final List<dynamic> data = json.decode(response);
+    setState(() {
+      drinks = data.map((item) => Drink.fromJson(item)).toList();
+      filteredDrinks = drinks;
     });
   }
 
@@ -66,8 +103,9 @@ class _StarbucksHomePageState extends State<StarbucksHomePage> {
   void filterDrinks() {
     setState(() {
       filteredDrinks = drinks
-          .where((drink) =>
-              drink.toLowerCase().contains(searchController.text.toLowerCase()))
+          .where((drink) => drink.name
+              .toLowerCase()
+              .contains(searchController.text.toLowerCase()))
           .toList();
     });
   }
@@ -115,10 +153,10 @@ class _StarbucksHomePageState extends State<StarbucksHomePage> {
               itemCount: filteredDrinks.length,
               itemBuilder: (context, index) {
                 return DrinkCard(
-                  name: filteredDrinks[index],
-                  description: "Description of ${filteredDrinks[index]}",
-                  price: "\$4.50",
-                  imageUrl: "https://via.placeholder.com/150",
+                  name: filteredDrinks[index].name,
+                  description: filteredDrinks[index].description,
+                  price: filteredDrinks[index].price,
+                  imageUrl: filteredDrinks[index].imageUrl,
                   onAddToCart: addToCart,
                 );
               },
@@ -206,7 +244,6 @@ class DrinkCard extends StatelessWidget {
   }
 }
 
-
 class CartPage extends StatelessWidget {
   final List<String> cart;
   final Function(String) onDelete;
@@ -234,54 +271,6 @@ class CartPage extends StatelessWidget {
                 );
               },
             ),
-    );
-  }
-}
-
-class DrinkDetailPage extends StatelessWidget {
-  final String name;
-  final String description;
-  final String price;
-  final String imageUrl;
-
-  const DrinkDetailPage({
-    super.key,
-    required this.name,
-    required this.description,
-    required this.price,
-    required this.imageUrl,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(name),
-        backgroundColor: const Color.fromARGB(219, 31, 19, 11),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Image.network(imageUrl),
-            const SizedBox(height: 16),
-            Text(
-              name,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              description,
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              price,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

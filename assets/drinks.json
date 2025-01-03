@@ -1,0 +1,188 @@
+[
+  {
+    "name": "Caffè Latte",
+    "description": "A classic espresso drink with steamed milk and foam.",
+    "price": "4.50",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Caramel Macchiato",
+    "description": "Espresso with steamed milk and caramel syrup.",
+    "price": "5.00",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Iced Coffee",
+    "description": "Chilled coffee with ice.",
+    "price": "3.50",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Matcha Latte",
+    "description": "Matcha green tea with steamed milk.",
+    "price": "4.75",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Espresso",
+    "description": "A strong, black coffee brewed by forcing steam through ground coffee beans.",
+    "price": "3.00",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Americano",
+    "description": "Espresso diluted with hot water.",
+    "price": "3.25",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Macchiato",
+    "description": "Espresso with a small amount of steamed milk or foam.",
+    "price": "3.50",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Mocha",
+    "description": "Espresso with steamed milk, chocolate syrup, and whipped cream.",
+    "price": "5.25",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Iced Latte",
+    "description": "Espresso with cold milk and ice.",
+    "price": "4.00",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Iced Matcha Latte",
+    "description": "Matcha green tea with cold milk and ice.",
+    "price": "4.75",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Iced Mocha",
+    "description": "Iced espresso with chocolate syrup and milk.",
+    "price": "5.00",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Affogato",
+    "description": "Espresso poured over a scoop of vanilla ice cream.",
+    "price": "5.50",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Cold Brew",
+    "description": "Coffee brewed with cold water over a long period of time.",
+    "price": "4.00",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Nitro Cold Brew",
+    "description": "Cold brew coffee infused with nitrogen for a smooth, creamy texture.",
+    "price": "5.50",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Turmeric Latte",
+    "description": "A latte made with turmeric, milk, and spices.",
+    "price": "4.75",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Honey Almondmilk Latte",
+    "description": "Espresso with almond milk and honey syrup.",
+    "price": "5.00",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Coconut Milk Latte",
+    "description": "Espresso with coconut milk.",
+    "price": "4.75",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Caramel Frappuccino",
+    "description": "A blended coffee drink with caramel syrup, ice, and whipped cream.",
+    "price": "5.50",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Vanilla Frappuccino",
+    "description": "A blended coffee drink with vanilla syrup, ice, and whipped cream.",
+    "price": "5.00",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Strawberry Frappuccino",
+    "description": "A blended strawberry drink with ice and whipped cream.",
+    "price": "5.00",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Peach Green Tea Lemonade",
+    "description": "A refreshing blend of green tea, peach syrup, and lemonade.",
+    "price": "4.50",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Pink Drink",
+    "description": "Coconut milk with strawberry acai, served with ice.",
+    "price": "5.00",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Dragon Drink",
+    "description": "A tropical drink made with mango and dragon fruit, mixed with coconut milk.",
+    "price": "5.25",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Mango Dragonfruit Lemonade",
+    "description": "A lemonade with mango and dragon fruit.",
+    "price": "4.75",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Lemonade",
+    "description": "Freshly squeezed lemonade.",
+    "price": "3.25",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Iced Lemonade",
+    "description": "A chilled, refreshing lemonade over ice.",
+    "price": "3.50",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Chai Latte",
+    "description": "A spiced tea latte made with chai concentrate and steamed milk.",
+    "price": "4.25",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "London Fog",
+    "description": "Earl Grey tea with steamed milk and vanilla syrup.",
+    "price": "4.50",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Hot Chocolate",
+    "description": "A warm drink made with milk and cocoa powder, topped with whipped cream.",
+    "price": "4.25",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Iced Hot Chocolate",
+    "description": "A cold version of the classic hot chocolate, served with ice.",
+    "price": "4.50",
+    "imageUrl": "https://via.placeholder.com/150"
+  },
+  {
+    "name": "Apple Cider",
+    "description": "A warm drink made with apple juice and cinnamon.",
+    "price": "4.25",
+    "imageUrl": "https://via.placeholder.com/150"
+  }
+]
