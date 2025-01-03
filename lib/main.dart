@@ -127,7 +127,7 @@ class _StarbucksHomePageState extends State<StarbucksHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Coffee"),
-        backgroundColor: const Color.fromARGB(219, 31, 19, 11),
+        backgroundColor: const Color.fromARGB(219, 228, 202, 185),
         actions: [
           IconButton(
             icon: const Icon(Icons.shopping_cart),
@@ -226,7 +226,7 @@ class DrinkCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(219, 31, 19, 11),
+                    color: Color.fromARGB(255, 96, 51, 23),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -255,7 +255,7 @@ class CartPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Your Cart"),
-        backgroundColor: const Color.fromARGB(219, 31, 19, 11),
+        backgroundColor: const Color.fromARGB(219, 228, 202, 185),
       ),
       body: cart.isEmpty
           ? const Center(child: Text("Your cart is empty"))
