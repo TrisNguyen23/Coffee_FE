@@ -1,108 +1,287 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(StarbucksApp());
+  runApp(const MyApp());
 }
 
-class StarbucksApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      title: 'Coffee UI',
       theme: ThemeData(
-        primaryColor: Colors.green,
-        // accentColor: Colors.brown,
-        fontFamily: 'Roboto',
+        primarySwatch: Colors.brown,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: StarbucksHomePage(),
+      home: const StarbucksHomePage(),
     );
   }
 }
 
-class StarbucksHomePage extends StatelessWidget {
+class StarbucksHomePage extends StatefulWidget {
+  const StarbucksHomePage({super.key});
+
+  @override
+  _StarbucksHomePageState createState() => _StarbucksHomePageState();
+}
+
+class _StarbucksHomePageState extends State<StarbucksHomePage> {
+  List<String> cart = [];
+  List<String> drinks = ["Caffè Latte", "Caramel Macchiato", "Iced Coffee", "Matcha Latte"];
+  List<String> filteredDrinks = [];
+  TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    filteredDrinks = drinks;
+    searchController.addListener(() {
+      filterDrinks();
+    });
+  }
+
+  void addToCart(String drink) {
+    setState(() {
+      cart.add(drink);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$drink has been added to your cart!'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void goToCart() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CartPage(cart: cart, onDelete: deleteFromCart),
+      ),
+    );
+  }
+
+  void filterDrinks() {
+    setState(() {
+      filteredDrinks = drinks
+          .where((drink) =>
+              drink.toLowerCase().contains(searchController.text.toLowerCase()))
+          .toList();
+    });
+  }
+
+  void deleteFromCart(String drink) {
+    setState(() {
+      cart.remove(drink);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$drink has been removed from your cart!'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Starbucks',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.green,
+        title: const Text("Coffee"),
+        backgroundColor: const Color.fromARGB(219, 31, 19, 11),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: goToCart,
+          ),
+        ],
       ),
       body: Column(
         children: [
-          _buildHeader(),
-          Expanded(child: _buildMenuList()),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      padding: EdgeInsets.all(20),
-      color: Colors.green,
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundColor: Colors.white,
-            radius: 40,
-            child: Image.network(
-              'https://upload.wikimedia.org/wikipedia/sco/d/d3/Starbucks_Corporation_Logo_2011.svg',
-              fit: BoxFit.contain,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: searchController,
+              decoration: const InputDecoration(
+                labelText: "Search",
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
+              ),
             ),
           ),
-          SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Welcome to Starbucks',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                'Enjoy your favorite coffee',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14,
-                ),
-              ),
-            ],
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredDrinks.length,
+              itemBuilder: (context, index) {
+                return DrinkCard(
+                  name: filteredDrinks[index],
+                  description: "Description of ${filteredDrinks[index]}",
+                  price: "\$4.50",
+                  imageUrl: "https://via.placeholder.com/150",
+                  onAddToCart: addToCart,
+                );
+              },
+            ),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildMenuList() {
-    final List<Map<String, String>> menuItems = [
-      {'name': 'Cappuccino', 'price': '4.50', 'image': 'https://via.placeholder.com/100'},
-      {'name': 'Latte', 'price': '4.00', 'image': 'https://via.placeholder.com/100'},
-      {'name': 'Mocha', 'price': '5.00', 'image': 'https://via.placeholder.com/100'},
-      {'name': 'Americano', 'price': '3.50', 'image': 'https://via.placeholder.com/100'},
-    ];
+class DrinkCard extends StatelessWidget {
+  final String name;
+  final String description;
+  final String price;
+  final String imageUrl;
+  final Function(String) onAddToCart;
 
-    return ListView.builder(
-      itemCount: menuItems.length,
-      itemBuilder: (context, index) {
-        final item = menuItems[index];
-        return Card(
-          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: ListTile(
-            leading: Image.network(item['image']!, width: 50, height: 50, fit: BoxFit.cover),
-            title: Text(item['name']!, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            subtitle: Text(item['price']!, style: TextStyle(color: Colors.green)),
-            trailing: Icon(Icons.add_shopping_cart, color: Colors.brown),
+  const DrinkCard({
+    super.key,
+    required this.name,
+    required this.description,
+    required this.price,
+    required this.imageUrl,
+    required this.onAddToCart,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      elevation: 5,
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.network(
+              imageUrl,
+              width: 120,
+              height: 120,
+              fit: BoxFit.cover,
+            ),
           ),
-        );
-      },
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  price,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(219, 31, 19, 11),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () =>
+                      onAddToCart(name), // Gọi hàm thêm vào giỏ hàng
+                  child: const Text("Add to Cart"),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class CartPage extends StatelessWidget {
+  final List<String> cart;
+  final Function(String) onDelete;
+
+  const CartPage({super.key, required this.cart, required this.onDelete});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Your Cart"),
+        backgroundColor: const Color.fromARGB(219, 31, 19, 11),
+      ),
+      body: cart.isEmpty
+          ? const Center(child: Text("Your cart is empty"))
+          : ListView.builder(
+              itemCount: cart.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(cart[index]),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () => onDelete(cart[index]),
+                  ),
+                );
+              },
+            ),
+    );
+  }
+}
+
+class DrinkDetailPage extends StatelessWidget {
+  final String name;
+  final String description;
+  final String price;
+  final String imageUrl;
+
+  const DrinkDetailPage({
+    super.key,
+    required this.name,
+    required this.description,
+    required this.price,
+    required this.imageUrl,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(name),
+        backgroundColor: const Color.fromARGB(219, 31, 19, 11),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Image.network(imageUrl),
+            const SizedBox(height: 16),
+            Text(
+              name,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              description,
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              price,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
