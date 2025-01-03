@@ -57,7 +57,7 @@ class StarbucksHomePage extends StatefulWidget {
 class _StarbucksHomePageState extends State<StarbucksHomePage> {
   List<Drink> drinks = [];
   List<Drink> filteredDrinks = [];
-  List<String> cart = [];
+  List<Drink> cart = [];
   TextEditingController searchController = TextEditingController();
 
   @override
@@ -79,13 +79,13 @@ class _StarbucksHomePageState extends State<StarbucksHomePage> {
     });
   }
 
-  void addToCart(String drink) {
+  void addToCart(Drink drink) {
     setState(() {
       cart.add(drink);
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('$drink has been added to your cart!'),
+        content: Text('${drink.name} has been added to your cart!'),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -110,13 +110,13 @@ class _StarbucksHomePageState extends State<StarbucksHomePage> {
     });
   }
 
-  void deleteFromCart(String drink) {
+  void deleteFromCart(Drink drink) {
     setState(() {
       cart.remove(drink);
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('$drink has been removed from your cart!'),
+        content: Text('${drink.name} has been removed from your cart!'),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -126,7 +126,12 @@ class _StarbucksHomePageState extends State<StarbucksHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Coffee"),
+        title: const Text(
+          "Coffee",
+          style: TextStyle(
+            fontWeight: FontWeight.bold, // Làm chữ đậm
+          ),
+        ),
         backgroundColor: const Color.fromARGB(219, 228, 202, 185),
         actions: [
           IconButton(
@@ -138,13 +143,26 @@ class _StarbucksHomePageState extends State<StarbucksHomePage> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(6.0),
             child: TextField(
               controller: searchController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: "Search",
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0), // Góc bo giống iOS
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                  borderSide: const BorderSide(
+                      color: Colors.grey), // Màu viền khi không focus
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                  borderSide: const BorderSide(
+                      color: Color.fromARGB(
+                          255, 32, 27, 18)), // Màu viền khi focus
+                ),
               ),
             ),
           ),
@@ -153,10 +171,7 @@ class _StarbucksHomePageState extends State<StarbucksHomePage> {
               itemCount: filteredDrinks.length,
               itemBuilder: (context, index) {
                 return DrinkCard(
-                  name: filteredDrinks[index].name,
-                  description: filteredDrinks[index].description,
-                  price: filteredDrinks[index].price,
-                  imageUrl: filteredDrinks[index].imageUrl,
+                  drink: filteredDrinks[index],
                   onAddToCart: addToCart,
                 );
               },
@@ -169,18 +184,12 @@ class _StarbucksHomePageState extends State<StarbucksHomePage> {
 }
 
 class DrinkCard extends StatelessWidget {
-  final String name;
-  final String description;
-  final String price;
-  final String imageUrl;
-  final Function(String) onAddToCart;
+  final Drink drink;
+  final Function(Drink) onAddToCart;
 
   const DrinkCard({
     super.key,
-    required this.name,
-    required this.description,
-    required this.price,
-    required this.imageUrl,
+    required this.drink,
     required this.onAddToCart,
   });
 
@@ -194,7 +203,7 @@ class DrinkCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.network(
-              imageUrl,
+              drink.imageUrl,
               width: 120,
               height: 120,
               fit: BoxFit.cover,
@@ -206,7 +215,7 @@ class DrinkCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
+                  drink.name,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -214,15 +223,15 @@ class DrinkCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  description,
+                  drink.description,
                   style: const TextStyle(
                     fontSize: 14,
-                    color: Colors.grey,
+                    color: Color.fromARGB(255, 32, 27, 18),
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  price,
+                  '\$${drink.price}', // Thêm ký hiệu $ trước giá
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -232,7 +241,14 @@ class DrinkCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: () =>
-                      onAddToCart(name), // Gọi hàm thêm vào giỏ hàng
+                      onAddToCart(drink), // Gọi hàm thêm vào giỏ hàng
+                  style: ElevatedButton.styleFrom(
+                    side: BorderSide(
+                        color: const Color.fromARGB(184, 55, 51, 40), width: 1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                  ),
                   child: const Text("Add to Cart"),
                 ),
               ],
@@ -244,33 +260,163 @@ class DrinkCard extends StatelessWidget {
   }
 }
 
+//Trang kiểm tra hàng trước khi thanh toán
 class CartPage extends StatelessWidget {
-  final List<String> cart;
-  final Function(String) onDelete;
+  final List<Drink> cart;
+  final Function(Drink) onDelete;
 
   const CartPage({super.key, required this.cart, required this.onDelete});
+
+  double calculateTotal() {
+    return cart.fold(0, (sum, drink) => sum + double.parse(drink.price));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Your Cart"),
+        title: const Text(
+          "Your Cart",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: const Color.fromARGB(219, 228, 202, 185),
       ),
-      body: cart.isEmpty
-          ? const Center(child: Text("Your cart is empty"))
-          : ListView.builder(
-              itemCount: cart.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(cart[index]),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () => onDelete(cart[index]),
+      body: Column(
+        children: [
+          Expanded(
+            child: cart.isEmpty
+                ? const Center(child: Text("Your cart is empty"))
+                : ListView.builder(
+                    itemCount: cart.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(cart[index].name),
+                        subtitle: Text('\$${cart[index].price}'),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () => onDelete(cart[index]),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Total: \$${calculateTotal().toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: cart.isEmpty
+                      ? null
+                      : () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PaymentPage(
+                                totalAmount: calculateTotal(),
+                              ),
+                            ),
+                          );
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: cart.isEmpty
+                        ? Colors.grey
+                        : const Color.fromARGB(219, 228, 202, 185),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 40,
+                      vertical: 15,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                  ),
+                  child: const Text(
+                    "Proceed to Payment",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+//Trang tính tiền
+class PaymentPage extends StatelessWidget {
+  final double totalAmount;
+
+  const PaymentPage({super.key, required this.totalAmount});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Payment",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color.fromARGB(219, 228, 202, 185),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Total: \$${totalAmount.toStringAsFixed(2)}',
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Payment successful!"),
+                    duration: Duration(seconds: 2),
                   ),
                 );
+                Navigator.pop(context); // Quay lại màn hình trước
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(219, 228, 202, 185),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+              ),
+              child: const Text(
+                "Pay Now",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black, // Đổi màu chữ thành trắng
+                ),
+              ),
             ),
+          ],
+        ),
+      ),
     );
   }
 }
